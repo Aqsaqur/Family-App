@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فعاليات العائلة - كونيكت العائلة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'warm-sage': '#8B9A7A',
+                        'soft-cream': '#F7F5F3',
+                        'deep-charcoal': '#2C2C2C',
+                        'gentle-peach': '#E8C4A0',
+                        'muted-lavender': '#B8A9C9',
+                        'success-green': '#7A9B7A',
+                        'warning-amber': '#D4A574',
+                        'error-coral': '#C67B7B'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'serif'],
+                        'playfair': ['Playfair Display', 'serif'],
+                        'amiri': ['Amiri', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F7F5F3;
+            font-family: 'Amiri', 'Inter', serif;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        .nav-blur {
+            backdrop-filter: blur(10px);
+            background: rgba(247, 245, 243, 0.95);
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .calendar-day {
+            background-color: white;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Amiri', sans-serif;
+        }
+        .calendar-day:hover {
+            background-color: #f7f5f3;
+        }
+        .calendar-day.today {
+            background-color: #8B9A7A;
+            color: white;
+        }
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 5px;
+            height: 5px;
+            background-color: #C67B7B;
+            border-radius: 50%;
+        }
+        .event-card {
+            transition: all 0.3s ease;
+        }
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        .rsvp-btn {
+            transition: all 0.3s ease;
+        }
+        .rsvp-btn.yes {
+            background-color: #7A9B7A;
+            color: white;
+        }
+        .rsvp-btn.maybe {
+            background-color: #D4A574;
+            color: white;
+        }
+        .rsvp-btn.no {
+            background-color: #C67B7B;
+            color: white;
+        }
+        .floating-btn {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            z-index: 50;
+        }
+        /* Arabic numeral styling */
+        .arabic-numeral {
+            font-family: 'Amiri', serif;
+            direction: ltr;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-soft-cream text-deep-charcoal pb-20 rtl">
+    <!-- Header -->
+    <div class="bg-white border-b border-gray-100 px-4 py-4">
+        <div class="max-w-md mx-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-tajawal font-bold text-deep-charcoal">فعاليات العائلة</h1>
+                    <p class="text-sm text-warm-sage"><span class="arabic-numeral">٥</span> فعاليات قادمة</p>
+                </div>
+                <button id="createEventBtn" class="bg-warm-sage text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
+                    إنشاء فعالية
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto px-4 py-6">
+        <!-- Calendar Navigation -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <button id="prevMonth" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <h2 id="currentMonth" class="text-lg font-semibold text-deep-charcoal">سبتمبر <span class="arabic-numeral">٢٠٢٤</span></h2>
+                <button id="nextMonth" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Calendar Grid -->
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Calendar days will be generated here -->
+            </div>
+        </div>
+
+        <!-- Rest of your content remains the same -->
+        <!-- Upcoming Events -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <h2 class="text-lg font-semibold text-deep-charcoal mb-4">الفعاليات القادمة</h2>
+            <div class="space-y-3" id="upcomingEvents">
+                <!-- Events will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Event Statistics -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <h2 class="text-lg font-semibold text-deep-charcoal mb-4">نشاط العائلة</h2>
+            <div id="activityChart" style="height: 200px;"></div>
+        </div>
+
+        <!-- Birthdays & Anniversaries -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <h2 class="text-lg font-semibold text-deep-charcoal mb-4">الأيام الخاصة هذا الشهر</h2>
+            <div class="space-y-3" id="specialDays">
+                <!-- Special days will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+        <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 nav-blur border-t border-gray-200">
+        <div class="max-w-md mx-auto px-4">
+            <div class="flex items-center justify-around py-3">
+                <a href="index-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span class="text-xs">الرئيسية</span>
+                </a>
+                <a href="members-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                    <span class="text-xs">العائلة</span>
+                </a>
+                <a href="photos-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-xs">الصور</span>
+                </a>
+                <a href="events-ar.html" class="flex flex-col items-center space-y-1 text-warm-sage">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span class="text-xs font-medium">الفعاليات</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+
+    <script>
+        // Arabic numeral conversion
+        const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+        
+        function toArabicNumerals(number) {
+            return number.toString().replace(/\d/g, digit => arabicNumerals[parseInt(digit)]);
+        }
+
+        function toArabicDate(date) {
+            const day = toArabicNumerals(date.getDate());
+            const month = toArabicNumerals(date.getMonth() + 1);
+            const year = toArabicNumerals(date.getFullYear());
+            return `${year}-${month}-${day}`;
+        }
+
+        // Events Page JavaScript
+        const currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+        
+        const arabicMonthNames = [
+            "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+            "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+        ];
+        
+        const arabicDayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        const arabicShortDayNames = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
+        
+        const arabicEvents = [
+            {
+                id: 1,
+                title: "ليلة الألعاب العائلية",
+                date: "2024-09-15",
+                time: "19:00",
+                location: "منزل سارة",
+                description: "ليلة الألعاب العائلية الشهرية! أحضروا ألعابكم المفضلة والوجبات الخفيفة.",
+                type: "gathering",
+                rsvp: { yes: 8, maybe: 2, no: 1 },
+                createdBy: "سارة جونسون"
+            },
+            {
+                id: 2,
+                title: "عشاء عيد ميلاد الجدة",
+                date: "2024-09-22",
+                time: "18:00",
+                location: "منزل الجدة",
+                description: "احتفال بعيد ميلاد الجدة الـ80 مع عشاء عائلي خاص.",
+                type: "birthday",
+                rsvp: { yes: 12, maybe: 1, no: 0 },
+                createdBy: "إيما ويلسون"
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventsPage();
+        });
+
+        function initializeEventsPage() {
+            renderCalendar();
+            renderUpcomingEvents();
+            renderSpecialDays();
+            initializeActivityChart();
+            setupEventListeners();
+            
+            // Animate page elements
+            anime({
+                targets: '.card-shadow',
+                translateY: [30, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 600,
+                easing: 'easeOutQuart'
+            });
+        }
+
+        function renderCalendar() {
+            const monthElement = document.getElementById('currentMonth');
+            const gridElement = document.getElementById('calendarGrid');
+            
+            // Display month with Arabic numerals for year
+            monthElement.innerHTML = `${arabicMonthNames[currentMonth]} <span class="arabic-numeral">${toArabicNumerals(currentYear)}</span>`;
+            gridElement.innerHTML = '';
+            
+            // Add day headers with Arabic names
+            arabicShortDayNames.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day text-xs font-medium text-gray-500 bg-gray-50';
+                header.style.aspectRatio = '2/1';
+                header.textContent = day;
+                gridElement.appendChild(header);
+            });
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day bg-gray-50';
+                gridElement.appendChild(emptyDay);
+            }
+            
+            // Add days of the month with Arabic numerals
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                
+                // Create span for Arabic numeral
+                const dayNumber = document.createElement('span');
+                dayNumber.className = 'arabic-numeral';
+                dayNumber.textContent = toArabicNumerals(day);
+                dayElement.appendChild(dayNumber);
+                
+                // Check if it's today
+                const today = new Date();
+                if (currentYear === today.getFullYear() && 
+                    currentMonth === today.getMonth() && 
+                    day === today.getDate()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // Check if there are events on this day
+                const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const hasEvent = arabicEvents.some(event => event.date === dateString);
+                if (hasEvent) {
+                    dayElement.classList.add('has-event');
+                }
+                
+                dayElement.addEventListener('click', function() {
+                    showDayEvents(dateString);
+                });
+                
+                gridElement.appendChild(dayElement);
+            }
+        }
+
+        function renderUpcomingEvents() {
+            const container = document.getElementById('upcomingEvents');
+            container.innerHTML = '';
+            
+            const upcomingEvents = arabicEvents
+                .filter(event => new Date(event.date) >= new Date())
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 3);
+            
+            upcomingEvents.forEach(event => {
+                const eventCard = createEventCard(event);
+                container.appendChild(eventCard);
+            });
+
+            // Update events count with Arabic numerals
+            const eventsCount = arabicEvents.filter(event => new Date(event.date) >= new Date()).length;
+            document.querySelector('.text-warm-sage').innerHTML = `<span class="arabic-numeral">${toArabicNumerals(eventsCount)}</span> فعاليات قادمة`;
+        }
+
+        function createEventCard(event) {
+            const card = document.createElement('div');
+            card.className = 'event-card bg-gray-50 rounded-lg p-3 cursor-pointer';
+            
+            const eventDate = new Date(event.date);
+            const arabicDay = arabicShortDayNames[eventDate.getDay()];
+            const arabicMonth = arabicMonthNames[eventDate.getMonth()].substr(0, 3);
+            const arabicDayNumber = toArabicNumerals(eventDate.getDate());
+            
+            const formattedDate = `${arabicDay} ${arabicDayNumber} ${arabicMonth}`;
+            
+            const typeColors = {
+                gathering: 'bg-gentle-peach',
+                birthday: 'bg-muted-lavender',
+                holiday: 'bg-success-green',
+                celebration: 'bg-warning-amber',
+                meeting: 'bg-warm-sage',
+                other: 'bg-gray-300'
+            };
+            
+            const typeColor = typeColors[event.type] || 'bg-gray-300';
+            
+            card.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <div class="w-12 h-12 ${typeColor} rounded-lg flex flex-col items-center justify-center text-white">
+                        <span class="text-xs font-bold arabic-numeral">${arabicDayNumber}</span>
+                        <span class="text-xs">${arabicMonth}</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-sm text-deep-charcoal">${event.title}</h3>
+                        <p class="text-xs text-gray-600 mt-1">${formattedDate} في ${event.time}</p>
+                        <p class="text-xs text-gray-500 mt-1">📍 ${event.location}</p>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-xs text-gray-500"><span class="arabic-numeral">${toArabicNumerals(event.rsvp.yes)}</span> حاضر</span>
+                            <span class="text-xs px-2 py-1 bg-white rounded-full">${getEventTypeText(event.type)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            card.addEventListener('click', function() {
+                showEventDetails(event);
+            });
+            
+            return card;
+        }
+
+        function renderSpecialDays() {
+            const container = document.getElementById('specialDays');
+            container.innerHTML = '';
+            
+            const arabicSpecialDays = [
+                {
+                    name: "سارة جونسون",
+                    type: "birthday",
+                    date: "١٨ سبتمبر",
+                    age: 32
+                },
+                {
+                    name: "مايك وآنا",
+                    type: "anniversary",
+                    date: "٢٥ سبتمبر",
+                    years: 15
+                },
+                {
+                    name: "إيما الصغيرة",
+                    type: "birthday",
+                    date: "٣٠ سبتمبر",
+                    age: 8
+                }
+            ];
+            
+            arabicSpecialDays.forEach(day => {
+                const dayCard = document.createElement('div');
+                dayCard.className = 'flex items-center space-x-3 p-3 bg-gray-50 rounded-lg';
+                
+                const icon = day.type === 'birthday' ? '🎂' : '💕';
+                const subtitle = day.type === 'birthday' ? 
+                    `يبلغ <span class="arabic-numeral">${toArabicNumerals(day.age)}</span> عاماً` : 
+                    `<span class="arabic-numeral">${toArabicNumerals(day.years)}</span> عاماً معاً`;
+                
+                dayCard.innerHTML = `
+                    <div class="text-2xl">${icon}</div>
+                    <div class="flex-1">
+                        <h3 class="font-medium text-sm text-deep-charcoal">${day.name}</h3>
+                        <p class="text-xs text-gray-600">${day.date} - ${subtitle}</p>
+                    </div>
+                `;
+                
+                container.appendChild(dayCard);
+            });
+        }
+
+        function initializeActivityChart() {
+            const chartDom = document.getElementById('activityChart');
+            const myChart = echarts.init(chartDom);
+            
+            const option = {
+                color: ['#8B9A7A', '#E8C4A0', '#B8A9C9'],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    },
+                    formatter: function(params) {
+                        let result = params[0].name + '<br/>';
+                        params.forEach(param => {
+                            result += `${param.seriesName}: <span class="arabic-numeral">${toArabicNumerals(param.value)}</span><br/>`;
+                        });
+                        return result;
+                    }
+                },
+                legend: {
+                    data: ['الفعاليات المنشأة', 'تأكيدات الحضور', 'الصور المشتركة'],
+                    bottom: 0,
+                    textStyle: {
+                        fontSize: 10,
+                        fontFamily: 'Tajawal'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '15%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر'],
+                        axisLabel: {
+                            fontSize: 10,
+                            fontFamily: 'Tajawal'
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        axisLabel: {
+                            fontSize: 10,
+                            formatter: function(value) {
+                                return toArabicNumerals(value);
+                            }
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: 'الفعاليات المنشأة',
+                        type: 'line',
+                        stack: 'Total',
+                        areaStyle: {
+                            opacity: 0.3
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: [2, 3, 1, 4, 2, 5, 3, 2, 4]
+                    },
+                    {
+                        name: 'تأكيدات الحضور',
+                        type: 'line',
+                        stack: 'Total',
+                        areaStyle: {
+                            opacity: 0.3
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: [15, 18, 12, 25, 16, 30, 22, 14, 28]
+                    },
+                    {
+                        name: 'الصور المشتركة',
+                        type: 'line',
+                        stack: 'Total',
+                        areaStyle: {
+                            opacity: 0.3
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: [8, 12, 6, 15, 10, 18, 14, 8, 16]
+                    }
+                ]
+            };
+            
+            myChart.setOption(option);
+        }
+
+        // Rest of your functions remain the same...
+        function setupEventListeners() {
+            // Calendar navigation
+            document.getElementById('prevMonth').addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar();
+            });
+            
+            document.getElementById('nextMonth').addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar();
+            });
+
+            // ... rest of your event listeners
+        }
+
+        function getEventTypeText(type) {
+            const typeMap = {
+                'gathering': 'تجمع عائلي',
+                'birthday': 'عيد ميلاد',
+                'holiday': 'عطلة',
+                'celebration': 'احتفال',
+                'meeting': 'اجتماع عائلي',
+                'other': 'أخرى'
+            };
+            return typeMap[type] || type;
+        }
+
+        // Add the missing FamilyConnect object
+        window.FamilyConnect = {
+            showNotification: function(message) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 left-4 right-4 bg-warm-sage text-white p-4 rounded-lg shadow-lg z-50 transform translate-y-[-100px] transition-transform duration-300';
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.classList.remove('translate-y-[-100px]');
+                    notification.classList.add('translate-y-0');
+                }, 100);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.classList.add('translate-y-[-100px]');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+        };
+    </script>
+</body>
+</html>

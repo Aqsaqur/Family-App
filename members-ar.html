@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أعضاء العائلة - FamilyConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'warm-sage': '#8B9A7A',
+                        'soft-cream': '#F7F5F3',
+                        'deep-charcoal': '#2C2C2C',
+                        'gentle-peach': '#E8C4A0',
+                        'muted-lavender': '#B8A9C9',
+                        'success-green': '#7A9B7A',
+                        'warning-amber': '#D4A574',
+                        'error-coral': '#C67B7B'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'playfair': ['Playfair Display', 'serif'],
+                        'amiri': ['Amiri', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F7F5F3;
+            font-family: 'Amiri', 'Inter', serif;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        .nav-blur {
+            backdrop-filter: blur(10px);
+            background: rgba(247, 245, 243, 0.95);
+        }
+        .member-card {
+            transition: all 0.3s ease;
+        }
+        .member-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            left: 2px;
+            width: 12px;
+            height: 12px;
+            border: 2px solid white;
+        }
+        .family-tree-container {
+            height: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        /* RTL specific styles */
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+    </style>
+</head>
+<body class="bg-soft-cream text-deep-charcoal pb-20 rtl">
+    <!-- Header -->
+    <div class="bg-white border-b border-gray-100 px-4 py-4">
+        <div class="max-w-md mx-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-tajawal font-bold text-deep-charcoal">أعضاء العائلة</h1>
+                    <p class="text-sm text-warm-sage">١٢ عضو عائلة متصلون</p>
+                </div>
+                <button id="addMemberBtn" class="bg-warm-sage text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
+                    إضافة عضو
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto px-4 py-6">
+        <!-- Family Tree Visualization -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <h2 class="text-lg font-semibold text-deep-charcoal mb-3">شجرة العائلة</h2>
+            <div id="familyTree" class="family-tree-container bg-gradient-to-br from-warm-sage/10 to-gentle-peach/10"></div>
+        </div>
+
+        <!-- Admin Controls -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <h2 class="text-lg font-semibold text-deep-charcoal mb-3">ضوابط المسؤول</h2>
+            <div class="space-y-3">
+                <button id="inviteBtn" class="w-full bg-gentle-peach text-deep-charcoal py-3 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
+                    دعوة عضو عائلة
+                </button>
+                <button id="manageRolesBtn" class="w-full bg-muted-lavender text-white py-3 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
+                    إدارة أدوار الأعضاء
+                </button>
+                <button id="familySettingsBtn" class="w-full bg-gray-100 text-deep-charcoal py-3 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all">
+                    إعدادات العائلة
+                </button>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <div class="flex items-center space-x-3 mb-3">
+                <div class="flex-1 relative">
+                    <input type="text" id="searchMembers" placeholder="ابحث عن أعضاء العائلة..." 
+                           class="w-full pr-10 pl-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-sage focus:border-transparent">
+                    <svg class="w-4 h-4 text-gray-400 absolute right-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <button id="filterBtn" class="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2">
+                <button class="member-filter active px-3 py-1 bg-warm-sage text-white rounded-full text-xs whitespace-nowrap" data-filter="all">الكل</button>
+                <button class="member-filter px-3 py-1 bg-gray-100 text-deep-charcoal rounded-full text-xs whitespace-nowrap" data-filter="online">متصل</button>
+                <button class="member-filter px-3 py-1 bg-gray-100 text-deep-charcoal rounded-full text-xs whitespace-nowrap" data-filter="admin">المسؤولون</button>
+                <button class="member-filter px-3 py-1 bg-gray-100 text-deep-charcoal rounded-full text-xs whitespace-nowrap" data-filter="recent">الحديثة</button>
+            </div>
+        </div>
+
+        <!-- Family Members Grid -->
+        <div id="membersGrid" class="space-y-4">
+            <!-- Members will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div id="addMemberModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl p-6 w-full max-w-sm">
+                <h3 class="text-lg font-semibold text-deep-charcoal mb-4">دعوة عضو عائلة</h3>
+                <form id="addMemberForm">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-deep-charcoal mb-2">الاسم</label>
+                            <input type="text" id="memberName" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-sage focus:border-transparent" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-deep-charcoal mb-2">البريد الإلكتروني</label>
+                            <input type="email" id="memberEmail" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-sage focus:border-transparent" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-deep-charcoal mb-2">العلاقة</label>
+                            <select id="memberRelationship" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-sage focus:border-transparent">
+                                <option value="sibling">أخ/أخت</option>
+                                <option value="parent">أب/أم</option>
+                                <option value="child">ابن/ابنة</option>
+                                <option value="spouse">زوج/زوجة</option>
+                                <option value="grandparent">جد/جدة</option>
+                                <option value="grandchild">حفيد/حفيدة</option>
+                                <option value="cousin">ابن عم/ابنة عم</option>
+                                <option value="other">أخرى</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-deep-charcoal mb-2">الدور</label>
+                            <select id="memberRole" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-sage focus:border-transparent">
+                                <option value="member">عضو</option>
+                                <option value="admin">مسؤول</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 mt-6">
+                        <button type="button" id="cancelAddMember" class="flex-1 px-4 py-2 border border-gray-200 text-deep-charcoal rounded-lg text-sm font-medium hover:bg-gray-50 transition-all">
+                            إلغاء
+                        </button>
+                        <button type="submit" class="flex-1 px-4 py-2 bg-warm-sage text-white rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
+                            إرسال دعوة
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 nav-blur border-t border-gray-200">
+        <div class="max-w-md mx-auto px-4">
+            <div class="flex items-center justify-around py-3">
+                <a href="index-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span class="text-xs">الرئيسية</span>
+                </a>
+                <a href="members-ar.html" class="flex flex-col items-center space-y-1 text-warm-sage">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                    </svg>
+                    <span class="text-xs font-medium">العائلة</span>
+                </a>
+                <a href="photos-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-xs">الصور</span>
+                </a>
+                <a href="events-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-xs">الفعاليات</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <script src="main.js"></script>
+    <script>
+        // Family Members Page JavaScript
+        
+        // Extended family members data
+        const extendedFamilyMembers = [
+            { 
+                id: 1, 
+                name: "سارة جونسون", 
+                role: "Admin", 
+                avatar: "images/muslim-family-6.jpg", 
+                online: true, 
+                relationship: "أخت",
+                lastActive: "منذ ساعتين",
+                posts: 12,
+                joinDate: "2023-01-15"
+            },
+            { 
+                id: 2, 
+                name: "مايك تشين", 
+                role: "Member", 
+                avatar: "images/muslim-family-7.jpg", 
+                online: true, 
+                relationship: "أخ",
+                lastActive: "منذ ٣٠ دقيقة",
+                posts: 8,
+                joinDate: "2023-02-20"
+            },
+            { 
+                id: 3, 
+                name: "إيما ويلسون", 
+                role: "Member", 
+                avatar: "images/muslim-family-8.jpg", 
+                online: false, 
+                relationship: "أم",
+                lastActive: "منذ يوم",
+                posts: 15,
+                joinDate: "2023-01-10"
+            },
+            { 
+                id: 4, 
+                name: "ديفيد مارتينيز", 
+                role: "Member", 
+                avatar: "images/muslim-family-1.jpg", 
+                online: true, 
+                relationship: "أب",
+                lastActive: "منذ ساعة",
+                posts: 6,
+                joinDate: "2023-01-12"
+            },
+            { 
+                id: 5, 
+                name: "ليلى طومسون", 
+                role: "Member", 
+                avatar: "images/muslim-family-5.jpeg", 
+                online: false, 
+                relationship: "جدة",
+                lastActive: "منذ ٣ أيام",
+                posts: 4,
+                joinDate: "2023-03-05"
+            },
+            { 
+                id: 6, 
+                name: "جيمس رودريجيز", 
+                role: "Admin", 
+                avatar: "images/muslim-family-3.jpeg", 
+                online: true, 
+                relationship: "ابن عم",
+                lastActive: "منذ ١٥ دقيقة",
+                posts: 9,
+                joinDate: "2023-01-20"
+            },
+            { 
+                id: 7, 
+                name: "آنا كيم", 
+                role: "Member", 
+                avatar: "images/muslim-family-4.jpeg", 
+                online: false, 
+                relationship: "عمة",
+                lastActive: "منذ يومين",
+                posts: 7,
+                joinDate: "2023-04-12"
+            },
+            { 
+                id: 8, 
+                name: "روبرت براون", 
+                role: "Member", 
+                avatar: "images/muslim-family-6.jpg", 
+                online: true, 
+                relationship: "عم",
+                lastActive: "منذ ٤٥ دقيقة",
+                posts: 5,
+                joinDate: "2023-04-15"
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMembersPage();
+        });
+
+        function initializeMembersPage() {
+            renderFamilyMembers(extendedFamilyMembers);
+            setupEventListeners();
+            initializeFamilyTree();
+            
+            // Animate page elements
+            anime({
+                targets: '.card-shadow',
+                translateY: [30, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 600,
+                easing: 'easeOutQuart'
+            });
+        }
+
+        function renderFamilyMembers(members) {
+            const grid = document.getElementById('membersGrid');
+            grid.innerHTML = '';
+
+            members.forEach((member, index) => {
+                const memberCard = createMemberCard(member, index);
+                grid.appendChild(memberCard);
+            });
+
+            // Animate member cards
+            anime({
+                targets: '.member-card',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(50),
+                duration: 400,
+                easing: 'easeOutQuart'
+            });
+        }
+
+        function createMemberCard(member, index) {
+            const card = document.createElement('div');
+            card.className = 'member-card bg-white rounded-xl p-4 card-shadow';
+            
+            const statusColor = member.online ? 'bg-success-green' : 'bg-gray-400';
+            const statusText = member.online ? 'متصل' : member.lastActive;
+            const roleColor = member.role === 'Admin' ? 'text-warning-amber' : 'text-gray-500';
+            const roleText = member.role === 'Admin' ? 'مسؤول' : 'عضو';
+            
+            card.innerHTML = `
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <img src="${member.avatar}" alt="${member.name}" class="w-12 h-12 rounded-full object-cover">
+                        <div class="online-indicator ${statusColor} rounded-full"></div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-deep-charcoal">${member.name}</h3>
+                            <span class="text-xs ${roleColor} font-medium">${roleText}</span>
+                        </div>
+                        <p class="text-sm text-gray-600">${getRelationshipText(member.relationship)}</p>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-xs text-gray-500">${statusText}</span>
+                            <div class="flex items-center space-x-3 text-xs text-gray-500">
+                                <span>${member.posts} منشور</span>
+                                <span>انضم ${new Date(member.joinDate).toLocaleDateString('ar-EG')}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+                    <button class="view-profile-btn text-warm-sage hover:text-deep-charcoal text-sm font-medium transition-colors" data-member-id="${member.id}">
+                        عرض الملف
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button class="message-btn p-2 text-gray-400 hover:text-warm-sage transition-colors" data-member-id="${member.id}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </button>
+                        ${member.role === 'Admin' ? `
+                            <button class="admin-btn p-2 text-warning-amber hover:text-deep-charcoal transition-colors" data-member-id="${member.id}">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 1l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 1z"/>
+                                </svg>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners
+            const viewProfileBtn = card.querySelector('.view-profile-btn');
+            const messageBtn = card.querySelector('.message-btn');
+            const adminBtn = card.querySelector('.admin-btn');
+            
+            viewProfileBtn.addEventListener('click', function() {
+                viewMemberProfile(member.id);
+            });
+            
+            messageBtn.addEventListener('click', function() {
+                FamilyConnect.showNotification(`المراسلة مع ${member.name} قريباً!`);
+            });
+            
+            if (adminBtn) {
+                adminBtn.addEventListener('click', function() {
+                    FamilyConnect.showNotification(`${member.name} هو مسؤول`);
+                });
+            }
+            
+            return card;
+        }
+
+        function getRelationshipText(relationship) {
+            const relationships = {
+                'sibling': 'أخ/أخت',
+                'parent': 'أب/أم',
+                'child': 'ابن/ابنة',
+                'spouse': 'زوج/زوجة',
+                'grandparent': 'جد/جدة',
+                'grandchild': 'حفيد/حفيدة',
+                'cousin': 'ابن عم/ابنة عم',
+                'aunt': 'عمة/خالة',
+                'uncle': 'عم/خال',
+                'other': 'أخرى'
+            };
+            return relationships[relationship] || relationship;
+        }
+
+        function setupEventListeners() {
+            // Add member modal
+            const addMemberBtn = document.getElementById('addMemberBtn');
+            const addMemberModal = document.getElementById('addMemberModal');
+            const cancelAddMember = document.getElementById('cancelAddMember');
+            const addMemberForm = document.getElementById('addMemberForm');
+            
+            addMemberBtn.addEventListener('click', function() {
+                addMemberModal.classList.remove('hidden');
+                anime({
+                    targets: addMemberModal.querySelector('.bg-white'),
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                });
+            });
+            
+            cancelAddMember.addEventListener('click', function() {
+                closeModal();
+            });
+            
+            addMemberModal.addEventListener('click', function(e) {
+                if (e.target === addMemberModal) {
+                    closeModal();
+                }
+            });
+            
+            addMemberForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleAddMember();
+            });
+
+            // Admin controls
+            document.getElementById('inviteBtn').addEventListener('click', function() {
+                addMemberModal.classList.remove('hidden');
+            });
+            
+            document.getElementById('manageRolesBtn').addEventListener('click', function() {
+                FamilyConnect.showNotification('إدارة الأدوار قريباً!');
+            });
+            
+            document.getElementById('familySettingsBtn').addEventListener('click', function() {
+                FamilyConnect.showNotification('إعدادات العائلة قريباً!');
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('searchMembers');
+            searchInput.addEventListener('input', function() {
+                filterMembers(this.value);
+            });
+
+            // Filter buttons
+            const filterBtns = document.querySelectorAll('.member-filter');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const filter = this.dataset.filter;
+                    applyMemberFilter(filter);
+                    
+                    // Update active state
+                    filterBtns.forEach(b => {
+                        b.classList.remove('active', 'bg-warm-sage', 'text-white');
+                        b.classList.add('bg-gray-100', 'text-deep-charcoal');
+                    });
+                    this.classList.add('active', 'bg-warm-sage', 'text-white');
+                    this.classList.remove('bg-gray-100', 'text-deep-charcoal');
+                });
+            });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('addMemberModal');
+            anime({
+                targets: modal.querySelector('.bg-white'),
+                scale: [1, 0.8],
+                opacity: [1, 0],
+                duration: 200,
+                easing: 'easeInQuart',
+                complete: () => {
+                    modal.classList.add('hidden');
+                }
+            });
+        }
+
+        function handleAddMember() {
+            const name = document.getElementById('memberName').value;
+            const email = document.getElementById('memberEmail').value;
+            const relationship = document.getElementById('memberRelationship').value;
+            const role = document.getElementById('memberRole').value;
+            
+            // Create new member object
+            const newMember = {
+                id: Date.now(),
+                name: name,
+                role: role,
+                avatar: "images/muslim-family-1.jpg",
+                online: false,
+                relationship: relationship,
+                lastActive: "لم يتصل بعد",
+                posts: 0,
+                joinDate: new Date().toISOString().split('T')[0]
+            };
+            
+            // Add to family members array
+            extendedFamilyMembers.unshift(newMember);
+            
+            // Re-render members
+            renderFamilyMembers(extendedFamilyMembers);
+            
+            // Close modal and reset form
+            closeModal();
+            document.getElementById('addMemberForm').reset();
+            
+            // Show success message
+            FamilyConnect.showNotification(`تمت دعوة ${name} للانضمام إلى العائلة!`);
+        }
+
+        function filterMembers(searchTerm) {
+            const filtered = extendedFamilyMembers.filter(member => 
+                member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                getRelationshipText(member.relationship).toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            renderFamilyMembers(filtered);
+        }
+
+        function applyMemberFilter(filter) {
+            let filtered = extendedFamilyMembers;
+            
+            switch(filter) {
+                case 'online':
+                    filtered = extendedFamilyMembers.filter(member => member.online);
+                    break;
+                case 'admin':
+                    filtered = extendedFamilyMembers.filter(member => member.role === 'Admin');
+                    break;
+                case 'recent':
+                    filtered = extendedFamilyMembers
+                        .sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate))
+                        .slice(0, 5);
+                    break;
+                default:
+                    filtered = extendedFamilyMembers;
+            }
+            
+            renderFamilyMembers(filtered);
+        }
+
+        function viewMemberProfile(memberId) {
+            const member = extendedFamilyMembers.find(m => m.id === memberId);
+            if (member) {
+                FamilyConnect.showNotification(`عرض ملف ${member.name} قريباً!`);
+            }
+        }
+
+        function initializeFamilyTree() {
+            // Simple p5.js family tree visualization
+            const sketch = (p) => {
+                let nodes = [];
+                let connections = [];
+                
+                p.setup = () => {
+                    const canvas = p.createCanvas(300, 250);
+                    canvas.parent('familyTree');
+                    
+                    // Create nodes for family members
+                    const centerX = p.width / 2;
+                    const centerY = p.height / 2;
+                    
+                    // Grandparents
+                    nodes.push({ x: centerX - 60, y: 40, name: "الجدة", size: 25, color: '#E8C4A0' });
+                    nodes.push({ x: centerX + 60, y: 40, name: "الجد", size: 25, color: '#E8C4A0' });
+                    
+                    // Parents
+                    nodes.push({ x: centerX - 40, y: 100, name: "الأم", size: 30, color: '#8B9A7A' });
+                    nodes.push({ x: centerX + 40, y: 100, name: "الأب", size: 30, color: '#8B9A7A' });
+                    
+                    // Children
+                    nodes.push({ x: centerX - 60, y: 160, name: "سارة", size: 25, color: '#B8A9C9' });
+                    nodes.push({ x: centerX, y: 160, name: "مايك", size: 25, color: '#B8A9C9' });
+                    nodes.push({ x: centerX + 60, y: 160, name: "إيما", size: 25, color: '#B8A9C9' });
+                    
+                    // Connections
+                    connections = [
+                        [0, 2], [1, 3], // Grandparents to Parents
+                        [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6] // Parents to Children
+                    ];
+                };
+                
+                p.draw = () => {
+                    p.background(247, 245, 243, 200);
+                    
+                    // Draw connections
+                    p.stroke(139, 154, 122, 100);
+                    p.strokeWeight(2);
+                    connections.forEach(conn => {
+                        const from = nodes[conn[0]];
+                        const to = nodes[conn[1]];
+                        p.line(from.x, from.y, to.x, to.y);
+                    });
+                    
+                    // Draw nodes
+                    nodes.forEach(node => {
+                        p.fill(node.color);
+                        p.noStroke();
+                        p.ellipse(node.x, node.y, node.size);
+                        
+                        p.fill(255);
+                        p.textAlign(p.CENTER, p.CENTER);
+                        p.textSize(8);
+                        p.text(node.name, node.x, node.y);
+                    });
+                };
+            };
+            
+            new p5(sketch);
+        }
+    </script>
+</body>
+</html>

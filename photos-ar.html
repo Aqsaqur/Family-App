@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صور العائلة - FamilyConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'warm-sage': '#8B9A7A',
+                        'soft-cream': '#F7F5F3',
+                        'deep-charcoal': '#2C2C2C',
+                        'gentle-peach': '#E8C4A0',
+                        'muted-lavender': '#B8A9C9',
+                        'success-green': '#7A9B7A',
+                        'warning-amber': '#D4A574',
+                        'error-coral': '#C67B7B'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'serif'],
+                        'playfair': ['Playfair Display', 'serif'],
+                        'tajawal': ['Amiri', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F7F5F3;
+            font-family: 'Amiri', 'Inter', serif;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        .nav-blur {
+            backdrop-filter: blur(10px);
+            background: rgba(247, 245, 243, 0.95);
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        .photo-item {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .photo-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .photo-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 12px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .photo-item:hover .photo-overlay {
+            transform: translateY(0);
+        }
+        .album-card {
+            transition: all 0.3s ease;
+        }
+        .album-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        .floating-btn {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            z-index: 50;
+        }
+        .upload-area {
+            border: 2px dashed #8B9A7A;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .upload-area.dragover {
+            border-color: #7A9B7A;
+            background-color: rgba(139, 154, 122, 0.1);
+        }
+        /* RTL specific styles */
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+        .splide__arrow--prev {
+            right: 0.5em;
+            left: auto;
+        }
+        .splide__arrow--next {
+            left: 0.5em;
+            right: auto;
+        }
+    </style>
+</head>
+<body class="bg-soft-cream text-deep-charcoal pb-20 rtl">
+    <!-- Header -->
+    <div class="bg-white border-b border-gray-100 px-4 py-4">
+        <div class="max-w-md mx-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-tajawal font-bold text-deep-charcoal">صور العائلة</h1>
+                    <p class="text-sm text-warm-sage">٤٨ ذكرى محفوظة</p>
+                </div>
+                <button id="uploadBtn" class="bg-warm-sage text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
+                    رفع الصور
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto px-4 py-6">
+        <!-- Photo Stats -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-white rounded-xl p-3 card-shadow text-center">
+                <div class="text-lg font-semibold text-warm-sage">٤٨</div>
+                <div class="text-xs text-deep-charcoal">إجمالي الصور</div>
+            </div>
+            <div class="bg-white rounded-xl p-3 card-shadow text-center">
+                <div class="text-lg font-semibold text-gentle-peach">٨</div>
+                <div class="text-xs text-deep-charcoal">الألبومات</div>
+            </div>
+            <div class="bg-white rounded-xl p-3 card-shadow text-center">
+                <div class="text-lg font-semibold text-muted-lavender">١٥٦</div>
+                <div class="text-xs text-deep-charcoal">الإعجابات</div>
+            </div>
+        </div>
+
+        <!-- Featured Memory -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <h2 class="text-lg font-semibold text-deep-charcoal mb-3">ذكرى اليوم</h2>
+            <div class="relative">
+                <img src="images/muslim-family-6.jpg" 
+                     alt="ذكرى اليوم" class="w-full h-48 object-cover rounded-lg">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg"></div>
+                <div class="absolute bottom-4 right-4 text-white">
+                    <h3 class="font-semibold">احتفال عيد ميلاد الجدة</h3>
+                    <p class="text-sm opacity-90">١٥ مارس ٢٠٢٤</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Albums Section -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-semibold text-deep-charcoal">ألبومات الصور</h2>
+                <button id="createAlbumBtn" class="text-warm-sage hover:text-deep-charcoal text-sm font-medium transition-colors">
+                    + إنشاء ألبوم
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3" id="albumsGrid">
+                <!-- Albums will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Recent Photos -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-semibold text-deep-charcoal">الصور الحديثة</h2>
+                <button id="viewAllBtn" class="text-warm-sage hover:text-deep-charcoal text-sm font-medium transition-colors">
+                    عرض الكل
+                </button>
+            </div>
+            
+            <div class="photo-grid" id="recentPhotosGrid">
+                <!-- Recent photos will be loaded here -->
+            </div>
+        </div>
+
+        <!-- This Day Last Year -->
+        <div class="bg-white rounded-xl p-4 card-shadow mb-6">
+            <h2 class="text-lg font-semibold text-deep-charcoal mb-3">في هذا اليوم من العام الماضي</h2>
+            <div class="splide" id="memoriesSlider">
+                <div class="splide__track">
+                    <ul class="splide__list" id="memoriesList">
+                        <!-- Memory photos will be loaded here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button id="floatingUploadBtn" class="floating-btn bg-warm-sage text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+    </button>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl p-6 w-full max-w-sm">
+                <h3 class="text-lg font-semibold text-deep-charcoal mb-4">رفع الصور</h3>
+                
+                <div class="upload-area p-6 mb-4 text-center" id="uploadArea">
+                    <svg class="w-12 h-12 text-warm-sage mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p class="text-sm text-gray-600 mb-2">اسحب وأفلت الصور هنا</p>
+                    <p class="text-xs text-gray-500">أو</p>
+                    <button type="button" class="mt-2 text-warm-sage hover:text-deep-charcoal text-sm font-medium transition-colors">
+                        اختر الملفات
+                    </button>
+                </div>
+                
+                <div class="space-y-3 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-deep-charcoal mb-2">إضافة إلى الألبوم</label>
+                        <select id="albumSelect" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-sage focus:border-transparent">
+                            <option value="">اختر ألبوماً...</option>
+                            <option value="new">+ إنشاء ألبوم جديد</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-deep-charcoal mb-2">الشرح (اختياري)</label>
+                        <textarea id="photoCaption" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-warm-sage focus:border-transparent resize-none" rows="3" placeholder="أضف شرحاً لصورك..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <button type="button" id="cancelUpload" class="flex-1 px-4 py-2 border border-gray-200 text-deep-charcoal rounded-lg text-sm font-medium hover:bg-gray-50 transition-all">
+                        إلغاء
+                    </button>
+                    <button type="button" id="uploadPhotos" class="flex-1 px-4 py-2 bg-warm-sage text-white rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
+                        رفع
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Viewer Modal -->
+    <div id="photoViewerModal" class="fixed inset-0 bg-black bg-black z-50 hidden">
+        <div class="relative h-full flex items-center justify-center p-4">
+            <button id="closeViewer" class="absolute top-4 left-4 text-white z-10">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <img id="viewerImage" src="" alt="" class="max-w-full max-h-full object-contain">
+            <div class="absolute bottom-4 right-4 left-4 text-white">
+                <div class="bg-black bg-opacity-50 rounded-lg p-4">
+                    <h3 id="viewerTitle" class="font-semibold mb-2"></h3>
+                    <p id="viewerCaption" class="text-sm opacity-90"></p>
+                    <div class="flex items-center justify-between mt-3">
+                        <span id="viewerDate" class="text-xs opacity-75"></span>
+                        <div class="flex items-center space-x-4">
+                            <button id="viewerLike" class="flex items-center space-x-1 hover:text-error-coral transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                                <span>١٢</span>
+                            </button>
+                            <button id="viewerComment" class="flex items-center space-x-1 hover:text-warm-sage transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                                <span>٥</span>
+                            </button>
+                            <button id="viewerShare" class="hover:text-muted-lavender transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 nav-blur border-t border-gray-200">
+        <div class="max-w-md mx-auto px-4">
+            <div class="flex items-center justify-around py-3">
+                <a href="index-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span class="text-xs">الرئيسية</span>
+                </a>
+                <a href="members-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                    <span class="text-xs">العائلة</span>
+                </a>
+                <a href="photos-ar.html" class="flex flex-col items-center space-y-1 text-warm-sage">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span class="text-xs font-medium">الصور</span>
+                </a>
+                <a href="events-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-xs">الفعاليات</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <script src="main.js"></script>
+    <script>
+        // Photo Gallery Page JavaScript
+        
+        // Sample photo data
+        const samplePhotos = [
+            {
+                id: 1,
+                url: "images/muslim-family-3.jpeg",
+                caption: "احتفال عيد ميلاد الجدة الثمانين! تجمع عائلي رائع.",
+                date: "2024-03-15",
+                likes: 15,
+                comments: 8,
+                album: "احتفالات العائلة",
+                tagged: ["سارة", "مايك", "إيما"]
+            },
+            {
+                id: 2,
+                url: "images/muslim-family-7.jpg",
+                caption: "الطبخ معاً كعائلة. نقل التقاليد!",
+                date: "2024-03-10",
+                likes: 12,
+                comments: 5,
+                album: "لحظات عائلية",
+                tagged: ["ليلى", "ديفيد"]
+            },
+            {
+                id: 3,
+                url: "images/muslim-family-2.png",
+                caption: "نزهة عائلية جميلة في الجبال. علاج بالطبيعة!",
+                date: "2024-03-05",
+                likes: 18,
+                comments: 6,
+                album: "مغامرات خارجية",
+                tagged: ["مايك", "آنا", "روبرت"]
+            },
+            {
+                id: 4,
+                url: "images/muslim-family-4.jpeg",
+                caption: "مرح ليلة الألعاب العائلية! ضحكنا كثيراً.",
+                date: "2024-03-01",
+                likes: 10,
+                comments: 4,
+                album: "لحظات عائلية",
+                tagged: ["إيما", "جيمس"]
+            },
+            {
+                id: 5,
+                url: "images/muslim-family-8.jpg",
+                caption: "صورة جماعية للاجتماع العائلي. الجميع حضروا!",
+                date: "2024-02-28",
+                likes: 25,
+                comments: 12,
+                album: "احتفالات العائلة",
+                tagged: ["الجميع"]
+            },
+            {
+                id: 6,
+                url: "images/muslim-family-3.jpeg",
+                caption: "الجدة تقرأ القصص للأطفال الصغار.",
+                date: "2024-02-25",
+                likes: 20,
+                comments: 7,
+                album: "لحظات عائلية",
+                tagged: ["ليلى", "الأطفال"]
+            }
+        ];
+
+        const albums = [
+            {
+                id: 1,
+                name: "احتفالات العائلة",
+                cover: "images/muslim-family-1.jpg",
+                count: 12,
+                lastUpdated: "2024-03-15"
+            },
+            {
+                id: 2,
+                name: "لحظات عائلية",
+                cover: "images/muslim-family-2.png",
+                count: 18,
+                lastUpdated: "2024-03-10"
+            },
+            {
+                id: 3,
+                name: "مغامرات خارجية",
+                cover: "images/muslim-family-3.jpeg",
+                count: 8,
+                lastUpdated: "2024-03-05"
+            },
+            {
+                id: 4,
+                name: "العطلات 2023",
+                cover: "images/muslim-family-4.jpeg",
+                count: 15,
+                lastUpdated: "2024-02-28"
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePhotosPage();
+        });
+
+        function initializePhotosPage() {
+            renderAlbums();
+            renderRecentPhotos();
+            renderMemoriesSlider();
+            setupEventListeners();
+            
+            // Animate page elements
+            anime({
+                targets: '.card-shadow',
+                translateY: [30, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 600,
+                easing: 'easeOutQuart'
+            });
+        }
+
+        function renderAlbums() {
+            const grid = document.getElementById('albumsGrid');
+            grid.innerHTML = '';
+
+            albums.forEach(album => {
+                const albumCard = document.createElement('div');
+                albumCard.className = 'album-card bg-gray-100 rounded-lg p-3 cursor-pointer';
+                albumCard.innerHTML = `
+                    <img src="${album.cover}" alt="${album.name}" class="w-full h-20 object-cover rounded-lg mb-2">
+                    <h3 class="font-medium text-sm text-deep-charcoal truncate">${album.name}</h3>
+                    <p class="text-xs text-gray-500">${album.count} صورة</p>
+                    <p class="text-xs text-gray-400">${new Date(album.lastUpdated).toLocaleDateString('ar-EG')}</p>
+                `;
+                
+                albumCard.addEventListener('click', function() {
+                    viewAlbum(album.id);
+                });
+                
+                grid.appendChild(albumCard);
+            });
+        }
+
+        function renderRecentPhotos() {
+            const grid = document.getElementById('recentPhotosGrid');
+            grid.innerHTML = '';
+
+            samplePhotos.slice(0, 6).forEach(photo => {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                photoItem.innerHTML = `
+                    <img src="${photo.url}" alt="${photo.caption}">
+                    <div class="photo-overlay">
+                        <p class="text-xs font-medium truncate">${photo.caption}</p>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="text-xs opacity-75">${new Date(photo.date).toLocaleDateString('ar-EG')}</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs">❤️ ${photo.likes}</span>
+                                <span class="text-xs">💬 ${photo.comments}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                photoItem.addEventListener('click', function() {
+                    openPhotoViewer(photo);
+                });
+                
+                grid.appendChild(photoItem);
+            });
+        }
+
+        function renderMemoriesSlider() {
+            const list = document.getElementById('memoriesList');
+            list.innerHTML = '';
+
+            samplePhotos.slice(0, 4).forEach(photo => {
+                const slide = document.createElement('li');
+                slide.className = 'splide__slide';
+                slide.innerHTML = `
+                    <div class="relative rounded-lg overflow-hidden">
+                        <img src="${photo.url}" alt="${photo.caption}" class="w-full h-32 object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div class="absolute bottom-2 right-2 text-white">
+                            <p class="text-xs font-medium truncate">${photo.caption}</p>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(slide);
+            });
+
+            // Initialize Splide slider
+            new Splide('#memoriesSlider', {
+                type: 'loop',
+                perPage: 2,
+                perMove: 1,
+                gap: '1rem',
+                pagination: false,
+                arrows: false,
+                autoplay: true,
+                interval: 3000,
+            }).mount();
+        }
+
+        function setupEventListeners() {
+            // Upload modal
+            const uploadBtn = document.getElementById('uploadBtn');
+            const floatingUploadBtn = document.getElementById('floatingUploadBtn');
+            const uploadModal = document.getElementById('uploadModal');
+            const cancelUpload = document.getElementById('cancelUpload');
+            
+            [uploadBtn, floatingUploadBtn].forEach(btn => {
+                btn.addEventListener('click', function() {
+                    uploadModal.classList.remove('hidden');
+                    anime({
+                        targets: uploadModal.querySelector('.bg-white'),
+                        scale: [0.8, 1],
+                        opacity: [0, 1],
+                        duration: 300,
+                        easing: 'easeOutQuart'
+                    });
+                });
+            });
+            
+            cancelUpload.addEventListener('click', function() {
+                closeUploadModal();
+            });
+            
+            uploadModal.addEventListener('click', function(e) {
+                if (e.target === uploadModal) {
+                    closeUploadModal();
+                }
+            });
+
+            // Upload functionality
+            document.getElementById('uploadPhotos').addEventListener('click', function() {
+                handlePhotoUpload();
+            });
+
+            // Photo viewer
+            const photoViewerModal = document.getElementById('photoViewerModal');
+            const closeViewer = document.getElementById('closeViewer');
+            
+            closeViewer.addEventListener('click', function() {
+                photoViewerModal.classList.add('hidden');
+            });
+            
+            photoViewerModal.addEventListener('click', function(e) {
+                if (e.target === photoViewerModal) {
+                    photoViewerModal.classList.add('hidden');
+                }
+            });
+
+            // Viewer interactions
+            document.getElementById('viewerLike').addEventListener('click', function() {
+                FamilyConnect.showNotification('تم الإعجاب بالصورة!');
+            });
+            
+            document.getElementById('viewerComment').addEventListener('click', function() {
+                FamilyConnect.showNotification('ميزة التعليقات قريباً!');
+            });
+            
+            document.getElementById('viewerShare').addEventListener('click', function() {
+                FamilyConnect.showNotification('تم مشاركة الصورة مع العائلة!');
+            });
+
+            // Create album
+            document.getElementById('createAlbumBtn').addEventListener('click', function() {
+                FamilyConnect.showNotification('ميزة إنشاء الألبومات قريباً!');
+            });
+
+            // View all photos
+            document.getElementById('viewAllBtn').addEventListener('click', function() {
+                FamilyConnect.showNotification('عرض جميع الصور قريباً!');
+            });
+
+            // Drag and drop functionality
+            const uploadArea = document.getElementById('uploadArea');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            function highlight() {
+                uploadArea.classList.add('dragover');
+            }
+            
+            function unhighlight() {
+                uploadArea.classList.remove('dragover');
+            }
+        }
+
+        function closeUploadModal() {
+            const modal = document.getElementById('uploadModal');
+            anime({
+                targets: modal.querySelector('.bg-white'),
+                scale: [1, 0.8],
+                opacity: [1, 0],
+                duration: 200,
+                easing: 'easeInQuart',
+                complete: () => {
+                    modal.classList.add('hidden');
+                }
+            });
+        }
+
+        function handlePhotoUpload() {
+            const caption = document.getElementById('photoCaption').value;
+            const album = document.getElementById('albumSelect').value;
+            
+            // Simulate upload
+            FamilyConnect.showNotification('تم تحميل الصور بنجاح!');
+            closeUploadModal();
+            
+            // Reset form
+            document.getElementById('photoCaption').value = '';
+            document.getElementById('albumSelect').value = '';
+        }
+
+        function openPhotoViewer(photo) {
+            const modal = document.getElementById('photoViewerModal');
+            const image = document.getElementById('viewerImage');
+            const title = document.getElementById('viewerTitle');
+            const caption = document.getElementById('viewerCaption');
+            const date = document.getElementById('viewerDate');
+            
+            image.src = photo.url;
+            title.textContent = photo.album;
+            caption.textContent = photo.caption;
+            date.textContent = new Date(photo.date).toLocaleDateString('ar-EG');
+            
+            modal.classList.remove('hidden');
+            
+            // Animate in
+            anime({
+                targets: image,
+                scale: [0.8, 1],
+                opacity: [0, 1],
+                duration: 300,
+                easing: 'easeOutQuart'
+            });
+        }
+
+        function viewAlbum(albumId) {
+            const album = albums.find(a => a.id === albumId);
+            if (album) {
+                FamilyConnect.showNotification(`عرض ألبوم ${album.name} قريباً!`);
+            }
+        }
+    </script>
+</body>
+</html>
