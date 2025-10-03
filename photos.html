@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صور العائلة - FamilyConnect</title>
+    <title>صور العائلة - كونيكت العائلة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -25,9 +24,9 @@
                         'error-coral': '#C67B7B'
                     },
                     fontFamily: {
-                        'inter': ['Inter', 'serif'],
+                        'inter': ['Inter', 'sans-serif'],
                         'playfair': ['Playfair Display', 'serif'],
-                        'tajawal': ['Amiri', 'serif']
+                        'amiri': ['Amiri', 'serif']
                     }
                 }
             }
@@ -124,7 +123,7 @@
         <div class="max-w-md mx-auto">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-xl font-tajawal font-bold text-deep-charcoal">صور العائلة</h1>
+                    <h1 class="text-xl font-bold text-deep-charcoal">صور العائلة</h1>
                     <p class="text-sm text-warm-sage">٤٨ ذكرى محفوظة</p>
                 </div>
                 <button id="uploadBtn" class="bg-warm-sage text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
@@ -257,7 +256,7 @@
     </div>
 
     <!-- Photo Viewer Modal -->
-    <div id="photoViewerModal" class="fixed inset-0 bg-black bg-black z-50 hidden">
+    <div id="photoViewerModal" class="fixed inset-0 bg-black z-50 hidden">
         <div class="relative h-full flex items-center justify-center p-4">
             <button id="closeViewer" class="absolute top-4 left-4 text-white z-10">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -300,25 +299,25 @@
     <nav class="fixed bottom-0 left-0 right-0 nav-blur border-t border-gray-200">
         <div class="max-w-md mx-auto px-4">
             <div class="flex items-center justify-around py-3">
-                <a href="index-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                <a href="index.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     <span class="text-xs">الرئيسية</span>
                 </a>
-                <a href="members-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                <a href="members.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                     </svg>
                     <span class="text-xs">العائلة</span>
                 </a>
-                <a href="photos-ar.html" class="flex flex-col items-center space-y-1 text-warm-sage">
+                <a href="photos.html" class="flex flex-col items-center space-y-1 text-warm-sage">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                     <span class="text-xs font-medium">الصور</span>
                 </a>
-                <a href="events-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                <a href="events.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
@@ -328,7 +327,6 @@
         </div>
     </nav>
 
-    <script src="main.js"></script>
     <script>
         // Photo Gallery Page JavaScript
         
@@ -336,7 +334,7 @@
         const samplePhotos = [
             {
                 id: 1,
-                url: "images/muslim-family-3.jpeg",
+                url: "images/muslim-family-3.jpg",
                 caption: "احتفال عيد ميلاد الجدة الثمانين! تجمع عائلي رائع.",
                 date: "2024-03-15",
                 likes: 15,
@@ -366,7 +364,7 @@
             },
             {
                 id: 4,
-                url: "images/muslim-family-4.jpeg",
+                url: "images/muslim-family-4.jpg",
                 caption: "مرح ليلة الألعاب العائلية! ضحكنا كثيراً.",
                 date: "2024-03-01",
                 likes: 10,
@@ -386,7 +384,7 @@
             },
             {
                 id: 6,
-                url: "images/muslim-family-3.jpeg",
+                url: "images/muslim-family-3.jpg",
                 caption: "الجدة تقرأ القصص للأطفال الصغار.",
                 date: "2024-02-25",
                 likes: 20,
@@ -414,14 +412,14 @@
             {
                 id: 3,
                 name: "مغامرات خارجية",
-                cover: "images/muslim-family-3.jpeg",
+                cover: "images/muslim-family-3.jpg",
                 count: 8,
                 lastUpdated: "2024-03-05"
             },
             {
                 id: 4,
                 name: "العطلات 2023",
-                cover: "images/muslim-family-4.jpeg",
+                cover: "images/muslim-family-4.jpg",
                 count: 15,
                 lastUpdated: "2024-02-28"
             }
@@ -438,18 +436,22 @@
             setupEventListeners();
             
             // Animate page elements
-            anime({
-                targets: '.card-shadow',
-                translateY: [30, 0],
-                opacity: [0, 1],
-                delay: anime.stagger(100),
-                duration: 600,
-                easing: 'easeOutQuart'
-            });
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: '.card-shadow',
+                    translateY: [30, 0],
+                    opacity: [0, 1],
+                    delay: anime.stagger(100),
+                    duration: 600,
+                    easing: 'easeOutQuart'
+                });
+            }
         }
 
         function renderAlbums() {
             const grid = document.getElementById('albumsGrid');
+            if (!grid) return;
+            
             grid.innerHTML = '';
 
             albums.forEach(album => {
@@ -459,7 +461,7 @@
                     <img src="${album.cover}" alt="${album.name}" class="w-full h-20 object-cover rounded-lg mb-2">
                     <h3 class="font-medium text-sm text-deep-charcoal truncate">${album.name}</h3>
                     <p class="text-xs text-gray-500">${album.count} صورة</p>
-                    <p class="text-xs text-gray-400">${new Date(album.lastUpdated).toLocaleDateString('ar-EG')}</p>
+                    <p class="text-xs text-gray-400">${formatDate(album.lastUpdated)}</p>
                 `;
                 
                 albumCard.addEventListener('click', function() {
@@ -472,6 +474,8 @@
 
         function renderRecentPhotos() {
             const grid = document.getElementById('recentPhotosGrid');
+            if (!grid) return;
+            
             grid.innerHTML = '';
 
             samplePhotos.slice(0, 6).forEach(photo => {
@@ -482,7 +486,7 @@
                     <div class="photo-overlay">
                         <p class="text-xs font-medium truncate">${photo.caption}</p>
                         <div class="flex items-center justify-between mt-1">
-                            <span class="text-xs opacity-75">${new Date(photo.date).toLocaleDateString('ar-EG')}</span>
+                            <span class="text-xs opacity-75">${formatDate(photo.date)}</span>
                             <div class="flex items-center space-x-2">
                                 <span class="text-xs">❤️ ${photo.likes}</span>
                                 <span class="text-xs">💬 ${photo.comments}</span>
@@ -501,6 +505,8 @@
 
         function renderMemoriesSlider() {
             const list = document.getElementById('memoriesList');
+            if (!list) return;
+            
             list.innerHTML = '';
 
             samplePhotos.slice(0, 4).forEach(photo => {
@@ -519,16 +525,23 @@
             });
 
             // Initialize Splide slider
-            new Splide('#memoriesSlider', {
-                type: 'loop',
-                perPage: 2,
-                perMove: 1,
-                gap: '1rem',
-                pagination: false,
-                arrows: false,
-                autoplay: true,
-                interval: 3000,
-            }).mount();
+            if (typeof Splide !== 'undefined') {
+                new Splide('#memoriesSlider', {
+                    type: 'loop',
+                    perPage: 2,
+                    perMove: 1,
+                    gap: '1rem',
+                    pagination: false,
+                    arrows: false,
+                    autoplay: true,
+                    interval: 3000,
+                }).mount();
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-EG');
         }
 
         function setupEventListeners() {
@@ -538,125 +551,179 @@
             const uploadModal = document.getElementById('uploadModal');
             const cancelUpload = document.getElementById('cancelUpload');
             
-            [uploadBtn, floatingUploadBtn].forEach(btn => {
-                btn.addEventListener('click', function() {
-                    uploadModal.classList.remove('hidden');
-                    anime({
-                        targets: uploadModal.querySelector('.bg-white'),
-                        scale: [0.8, 1],
-                        opacity: [0, 1],
-                        duration: 300,
-                        easing: 'easeOutQuart'
-                    });
+            if (uploadBtn && uploadModal) {
+                uploadBtn.addEventListener('click', function() {
+                    openUploadModal();
                 });
-            });
+            }
             
-            cancelUpload.addEventListener('click', function() {
-                closeUploadModal();
-            });
+            if (floatingUploadBtn && uploadModal) {
+                floatingUploadBtn.addEventListener('click', function() {
+                    openUploadModal();
+                });
+            }
             
-            uploadModal.addEventListener('click', function(e) {
-                if (e.target === uploadModal) {
+            if (cancelUpload) {
+                cancelUpload.addEventListener('click', function() {
                     closeUploadModal();
-                }
-            });
+                });
+            }
+            
+            if (uploadModal) {
+                uploadModal.addEventListener('click', function(e) {
+                    if (e.target === uploadModal) {
+                        closeUploadModal();
+                    }
+                });
+            }
 
             // Upload functionality
-            document.getElementById('uploadPhotos').addEventListener('click', function() {
-                handlePhotoUpload();
-            });
+            const uploadPhotosBtn = document.getElementById('uploadPhotos');
+            if (uploadPhotosBtn) {
+                uploadPhotosBtn.addEventListener('click', function() {
+                    handlePhotoUpload();
+                });
+            }
 
             // Photo viewer
             const photoViewerModal = document.getElementById('photoViewerModal');
             const closeViewer = document.getElementById('closeViewer');
             
-            closeViewer.addEventListener('click', function() {
-                photoViewerModal.classList.add('hidden');
-            });
-            
-            photoViewerModal.addEventListener('click', function(e) {
-                if (e.target === photoViewerModal) {
+            if (closeViewer && photoViewerModal) {
+                closeViewer.addEventListener('click', function() {
                     photoViewerModal.classList.add('hidden');
-                }
-            });
+                });
+            }
+            
+            if (photoViewerModal) {
+                photoViewerModal.addEventListener('click', function(e) {
+                    if (e.target === photoViewerModal) {
+                        photoViewerModal.classList.add('hidden');
+                    }
+                });
+            }
 
             // Viewer interactions
-            document.getElementById('viewerLike').addEventListener('click', function() {
-                FamilyConnect.showNotification('تم الإعجاب بالصورة!');
-            });
+            const viewerLike = document.getElementById('viewerLike');
+            const viewerComment = document.getElementById('viewerComment');
+            const viewerShare = document.getElementById('viewerShare');
             
-            document.getElementById('viewerComment').addEventListener('click', function() {
-                FamilyConnect.showNotification('ميزة التعليقات قريباً!');
-            });
+            if (viewerLike) {
+                viewerLike.addEventListener('click', function() {
+                    FamilyConnect.showNotification('تم الإعجاب بالصورة!');
+                });
+            }
             
-            document.getElementById('viewerShare').addEventListener('click', function() {
-                FamilyConnect.showNotification('تم مشاركة الصورة مع العائلة!');
-            });
+            if (viewerComment) {
+                viewerComment.addEventListener('click', function() {
+                    FamilyConnect.showNotification('ميزة التعليقات قريباً!');
+                });
+            }
+            
+            if (viewerShare) {
+                viewerShare.addEventListener('click', function() {
+                    FamilyConnect.showNotification('تم مشاركة الصورة مع العائلة!');
+                });
+            }
 
             // Create album
-            document.getElementById('createAlbumBtn').addEventListener('click', function() {
-                FamilyConnect.showNotification('ميزة إنشاء الألبومات قريباً!');
-            });
+            const createAlbumBtn = document.getElementById('createAlbumBtn');
+            if (createAlbumBtn) {
+                createAlbumBtn.addEventListener('click', function() {
+                    FamilyConnect.showNotification('ميزة إنشاء الألبومات قريباً!');
+                });
+            }
 
             // View all photos
-            document.getElementById('viewAllBtn').addEventListener('click', function() {
-                FamilyConnect.showNotification('عرض جميع الصور قريباً!');
-            });
+            const viewAllBtn = document.getElementById('viewAllBtn');
+            if (viewAllBtn) {
+                viewAllBtn.addEventListener('click', function() {
+                    FamilyConnect.showNotification('عرض جميع الصور قريباً!');
+                });
+            }
 
             // Drag and drop functionality
             const uploadArea = document.getElementById('uploadArea');
-            
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            ['dragenter', 'dragover'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, unhighlight, false);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
+            if (uploadArea) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, preventDefaults, false);
+                });
+                
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, highlight, false);
+                });
+                
+                ['dragleave', 'drop'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, unhighlight, false);
+                });
+                
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                function highlight() {
+                    uploadArea.classList.add('dragover');
+                }
+                
+                function unhighlight() {
+                    uploadArea.classList.remove('dragover');
+                }
             }
+        }
+
+        function openUploadModal() {
+            const modal = document.getElementById('uploadModal');
+            if (!modal) return;
             
-            function highlight() {
-                uploadArea.classList.add('dragover');
-            }
-            
-            function unhighlight() {
-                uploadArea.classList.remove('dragover');
+            modal.classList.remove('hidden');
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: modal.querySelector('.bg-white'),
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                });
             }
         }
 
         function closeUploadModal() {
             const modal = document.getElementById('uploadModal');
-            anime({
-                targets: modal.querySelector('.bg-white'),
-                scale: [1, 0.8],
-                opacity: [1, 0],
-                duration: 200,
-                easing: 'easeInQuart',
-                complete: () => {
-                    modal.classList.add('hidden');
-                }
-            });
+            if (!modal) return;
+            
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: modal.querySelector('.bg-white'),
+                    scale: [1, 0.8],
+                    opacity: [1, 0],
+                    duration: 200,
+                    easing: 'easeInQuart',
+                    complete: () => {
+                        modal.classList.add('hidden');
+                    }
+                });
+            } else {
+                modal.classList.add('hidden');
+            }
         }
 
         function handlePhotoUpload() {
-            const caption = document.getElementById('photoCaption').value;
-            const album = document.getElementById('albumSelect').value;
+            const captionInput = document.getElementById('photoCaption');
+            const albumSelect = document.getElementById('albumSelect');
+            
+            if (!captionInput || !albumSelect) return;
+            
+            const caption = captionInput.value;
+            const album = albumSelect.value;
             
             // Simulate upload
             FamilyConnect.showNotification('تم تحميل الصور بنجاح!');
             closeUploadModal();
             
             // Reset form
-            document.getElementById('photoCaption').value = '';
-            document.getElementById('albumSelect').value = '';
+            captionInput.value = '';
+            albumSelect.value = '';
         }
 
         function openPhotoViewer(photo) {
@@ -666,21 +733,25 @@
             const caption = document.getElementById('viewerCaption');
             const date = document.getElementById('viewerDate');
             
+            if (!modal || !image || !title || !caption || !date) return;
+            
             image.src = photo.url;
             title.textContent = photo.album;
             caption.textContent = photo.caption;
-            date.textContent = new Date(photo.date).toLocaleDateString('ar-EG');
+            date.textContent = formatDate(photo.date);
             
             modal.classList.remove('hidden');
             
             // Animate in
-            anime({
-                targets: image,
-                scale: [0.8, 1],
-                opacity: [0, 1],
-                duration: 300,
-                easing: 'easeOutQuart'
-            });
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: image,
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                });
+            }
         }
 
         function viewAlbum(albumId) {
@@ -689,6 +760,34 @@
                 FamilyConnect.showNotification(`عرض ألبوم ${album.name} قريباً!`);
             }
         }
+
+        // Global FamilyConnect object for notifications
+        window.FamilyConnect = {
+            showNotification: function(message) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 left-4 right-4 bg-warm-sage text-white p-4 rounded-lg shadow-lg z-50 transform translate-y-[-100px] transition-transform duration-300';
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.classList.remove('translate-y-[-100px]');
+                    notification.classList.add('translate-y-0');
+                }, 100);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.classList.add('translate-y-[-100px]');
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        };
     </script>
 </body>
 </html>

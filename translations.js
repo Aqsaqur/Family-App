@@ -219,7 +219,7 @@ const translations = {
         familyTree: "شجرة العائلة",
         adminControls: "ضوابط المسؤول",
         inviteMember: "دعوة عضو عائلة",
-        manageRoles: "إدارة أدوات الأعضاء",
+        manageRoles: "إدارة أدوار الأعضاء",
         familySettings: "إعدادات العائلة",
         searchMembers: "بحث عن أعضاء العائلة...",
         all: "الكل",
@@ -347,7 +347,7 @@ const translations = {
 // Language management class
 class LanguageManager {
     constructor() {
-        this.currentLang = localStorage.getItem('familyConnectLang') || 'en';
+        this.currentLang = localStorage.getItem('familyConnectLang') || 'ar'; // Default to Arabic
         this.isRTL = this.currentLang === 'ar';
         this.init();
     }
@@ -355,17 +355,23 @@ class LanguageManager {
     init() {
         this.applyLanguage();
         this.updateDirection();
+        this.setupLanguageSwitcher();
     }
     
     setLanguage(lang) {
+        if (!translations[lang]) {
+            console.warn(`Language ${lang} not supported`);
+            return;
+        }
+        
         this.currentLang = lang;
         this.isRTL = lang === 'ar';
         localStorage.setItem('familyConnectLang', lang);
         this.applyLanguage();
         this.updateDirection();
         
-        // Reload page to apply changes
-        window.location.reload();
+        // Show notification
+        this.showLanguageChangeNotification();
     }
     
     getCurrentLang() {
@@ -373,7 +379,12 @@ class LanguageManager {
     }
     
     getTranslation(key) {
-        return translations[this.currentLang][key] || translations['en'][key] || key;
+        const translation = translations[this.currentLang][key];
+        if (!translation) {
+            console.warn(`Translation missing for key: "${key}" in language: "${this.currentLang}"`);
+            return translations['en'][key] || key;
+        }
+        return translation;
     }
     
     applyLanguage() {
@@ -387,10 +398,17 @@ class LanguageManager {
                 element.placeholder = translation;
             } else if (element.tagName === 'TEXTAREA') {
                 element.placeholder = translation;
+            } else if (element.hasAttribute('title')) {
+                element.title = translation;
+            } else if (element.hasAttribute('aria-label')) {
+                element.setAttribute('aria-label', translation);
             } else {
                 element.textContent = translation;
             }
         });
+        
+        // Update any dynamic content
+        this.translateDynamicContent();
     }
     
     updateDirection() {
@@ -400,15 +418,139 @@ class LanguageManager {
         // Update body classes for RTL styling
         if (this.isRTL) {
             document.body.classList.add('rtl');
+            document.body.classList.remove('ltr');
         } else {
+            document.body.classList.add('ltr');
             document.body.classList.remove('rtl');
         }
+    }
+    
+    setupLanguageSwitcher() {
+        // Create language switcher if it doesn't exist
+        let switcher = document.getElementById('languageSwitcher');
+        if (!switcher) {
+            switcher = document.createElement('div');
+            switcher.id = 'languageSwitcher';
+            switcher.className = 'language-switcher fixed top-4 right-4 z-50';
+            switcher.innerHTML = `
+                <div class="bg-white rounded-lg shadow-lg p-2 flex space-x-2">
+                    <button class="lang-btn px-3 py-1 rounded text-sm font-medium transition-all ${
+                        this.currentLang === 'ar' ? 'bg-warm-sage text-white' : 'bg-gray-100 text-gray-700'
+                    }" data-lang="ar">العربية</button>
+                    <button class="lang-btn px-3 py-1 rounded text-sm font-medium transition-all ${
+                        this.currentLang === 'en' ? 'bg-warm-sage text-white' : 'bg-gray-100 text-gray-700'
+                    }" data-lang="en">English</button>
+                </div>
+            `;
+            
+            document.body.appendChild(switcher);
+            
+            // Add event listeners
+            switcher.addEventListener('click', (e) => {
+                if (e.target.classList.contains('lang-btn') && e.target.dataset.lang) {
+                    this.setLanguage(e.target.dataset.lang);
+                }
+            });
+        }
+    }
+    
+    translateDynamicContent() {
+        // This function can be called when new content is dynamically added to the page
+        // For now, it re-applies translations to all elements
+        this.applyLanguage();
+    }
+    
+    showLanguageChangeNotification() {
+        const message = this.currentLang === 'ar' 
+            ? 'تم تغيير اللغة إلى العربية' 
+            : 'Language changed to English';
+        
+        // Use the existing notification system if available
+        if (window.FamilyConnect && typeof window.FamilyConnect.showNotification === 'function') {
+            window.FamilyConnect.showNotification(message);
+        } else {
+            // Fallback notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 left-4 right-4 bg-warm-sage text-white p-4 rounded-lg shadow-lg z-50 transform translate-y-[-100px] transition-transform duration-300';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-y-[-100px]');
+                notification.classList.add('translate-y-0');
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-y-[-100px]');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    }
+    
+    // Utility function to format numbers based on language
+    formatNumber(number) {
+        if (this.currentLang === 'ar') {
+            // Convert to Arabic numerals
+            const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            return number.toString().replace(/\d/g, digit => arabicNumerals[parseInt(digit)]);
+        }
+        return number.toString();
+    }
+    
+    // Utility function to format dates based on language
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        if (this.currentLang === 'ar') {
+            return date.toLocaleDateString('ar-EG');
+        }
+        return date.toLocaleDateString('en-US');
     }
 }
 
 // Initialize language manager
 const languageManager = new LanguageManager();
 
+// Function to translate specific text (useful for JavaScript-generated content)
+function translate(key) {
+    return languageManager.getTranslation(key);
+}
+
+// Function to update translations when new content is added
+function updateTranslations() {
+    languageManager.translateDynamicContent();
+}
+
 // Export for use in other files
 window.LanguageManager = languageManager;
 window.translations = translations;
+window.translate = translate;
+window.updateTranslations = updateTranslations;
+
+// Auto-initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Language manager is already initialized in constructor
+    console.log('FamilyConnect Translations loaded - Current language:', languageManager.getCurrentLang());
+});
+
+// Add some basic CSS for the language switcher
+const style = document.createElement('style');
+style.textContent = `
+    .language-switcher .lang-btn {
+        transition: all 0.3s ease;
+    }
+    .language-switcher .lang-btn:hover {
+        transform: scale(1.05);
+    }
+    .rtl .language-switcher {
+        right: auto;
+        left: 1rem;
+    }
+`;
+document.head.appendChild(style);

@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أعضاء العائلة - FamilyConnect</title>
+    <title>أعضاء العائلة - كونيكت العائلة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -57,11 +56,16 @@
             width: 12px;
             height: 12px;
             border: 2px solid white;
+            border-radius: 50%;
         }
         .family-tree-container {
-            height: 300px;
+            height: 200px;
             border-radius: 12px;
             overflow: hidden;
+            background: linear-gradient(135deg, rgba(139, 154, 122, 0.1) 0%, rgba(232, 196, 160, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         /* RTL specific styles */
         .rtl {
@@ -76,7 +80,7 @@
         <div class="max-w-md mx-auto">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-xl font-tajawal font-bold text-deep-charcoal">أعضاء العائلة</h1>
+                    <h1 class="text-xl font-bold text-deep-charcoal">أعضاء العائلة</h1>
                     <p class="text-sm text-warm-sage">١٢ عضو عائلة متصلون</p>
                 </div>
                 <button id="addMemberBtn" class="bg-warm-sage text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all">
@@ -90,7 +94,15 @@
         <!-- Family Tree Visualization -->
         <div class="bg-white rounded-xl p-4 card-shadow mb-6">
             <h2 class="text-lg font-semibold text-deep-charcoal mb-3">شجرة العائلة</h2>
-            <div id="familyTree" class="family-tree-container bg-gradient-to-br from-warm-sage/10 to-gentle-peach/10"></div>
+            <div id="familyTree" class="family-tree-container">
+                <div class="text-center text-gray-600">
+                    <svg class="w-12 h-12 mx-auto mb-2 text-warm-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                    <p class="text-sm">شجرة العائلة التفاعلية</p>
+                    <p class="text-xs text-gray-500">قريباً...</p>
+                </div>
+            </div>
         </div>
 
         <!-- Admin Controls -->
@@ -193,25 +205,25 @@
     <nav class="fixed bottom-0 left-0 right-0 nav-blur border-t border-gray-200">
         <div class="max-w-md mx-auto px-4">
             <div class="flex items-center justify-around py-3">
-                <a href="index-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                <a href="index.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     <span class="text-xs">الرئيسية</span>
                 </a>
-                <a href="members-ar.html" class="flex flex-col items-center space-y-1 text-warm-sage">
+                <a href="members.html" class="flex flex-col items-center space-y-1 text-warm-sage">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
                     </svg>
                     <span class="text-xs font-medium">العائلة</span>
                 </a>
-                <a href="photos-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                <a href="photos.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
                     <span class="text-xs">الصور</span>
                 </a>
-                <a href="events-ar.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
+                <a href="events.html" class="flex flex-col items-center space-y-1 text-gray-400 hover:text-warm-sage transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
@@ -221,7 +233,6 @@
         </div>
     </nav>
 
-    <script src="main.js"></script>
     <script>
         // Family Members Page JavaScript
         
@@ -275,7 +286,7 @@
                 id: 5, 
                 name: "ليلى طومسون", 
                 role: "Member", 
-                avatar: "images/muslim-family-5.jpeg", 
+                avatar: "images/muslim-family-5.jpg", 
                 online: false, 
                 relationship: "جدة",
                 lastActive: "منذ ٣ أيام",
@@ -286,7 +297,7 @@
                 id: 6, 
                 name: "جيمس رودريجيز", 
                 role: "Admin", 
-                avatar: "images/muslim-family-3.jpeg", 
+                avatar: "images/muslim-family-3.jpg", 
                 online: true, 
                 relationship: "ابن عم",
                 lastActive: "منذ ١٥ دقيقة",
@@ -297,7 +308,7 @@
                 id: 7, 
                 name: "آنا كيم", 
                 role: "Member", 
-                avatar: "images/muslim-family-4.jpeg", 
+                avatar: "images/muslim-family-4.jpg", 
                 online: false, 
                 relationship: "عمة",
                 lastActive: "منذ يومين",
@@ -324,21 +335,24 @@
         function initializeMembersPage() {
             renderFamilyMembers(extendedFamilyMembers);
             setupEventListeners();
-            initializeFamilyTree();
             
             // Animate page elements
-            anime({
-                targets: '.card-shadow',
-                translateY: [30, 0],
-                opacity: [0, 1],
-                delay: anime.stagger(100),
-                duration: 600,
-                easing: 'easeOutQuart'
-            });
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: '.card-shadow',
+                    translateY: [30, 0],
+                    opacity: [0, 1],
+                    delay: anime.stagger(100),
+                    duration: 600,
+                    easing: 'easeOutQuart'
+                });
+            }
         }
 
         function renderFamilyMembers(members) {
             const grid = document.getElementById('membersGrid');
+            if (!grid) return;
+            
             grid.innerHTML = '';
 
             members.forEach((member, index) => {
@@ -347,14 +361,16 @@
             });
 
             // Animate member cards
-            anime({
-                targets: '.member-card',
-                translateY: [50, 0],
-                opacity: [0, 1],
-                delay: anime.stagger(50),
-                duration: 400,
-                easing: 'easeOutQuart'
-            });
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: '.member-card',
+                    translateY: [50, 0],
+                    opacity: [0, 1],
+                    delay: anime.stagger(50),
+                    duration: 400,
+                    easing: 'easeOutQuart'
+                });
+            }
         }
 
         function createMemberCard(member, index) {
@@ -370,7 +386,7 @@
                 <div class="flex items-center space-x-4">
                     <div class="relative">
                         <img src="${member.avatar}" alt="${member.name}" class="w-12 h-12 rounded-full object-cover">
-                        <div class="online-indicator ${statusColor} rounded-full"></div>
+                        <div class="online-indicator ${statusColor}"></div>
                     </div>
                     <div class="flex-1">
                         <div class="flex items-center justify-between">
@@ -382,7 +398,7 @@
                             <span class="text-xs text-gray-500">${statusText}</span>
                             <div class="flex items-center space-x-3 text-xs text-gray-500">
                                 <span>${member.posts} منشور</span>
-                                <span>انضم ${new Date(member.joinDate).toLocaleDateString('ar-EG')}</span>
+                                <span>انضم ${formatDate(member.joinDate)}</span>
                             </div>
                         </div>
                     </div>
@@ -446,6 +462,11 @@
             return relationships[relationship] || relationship;
         }
 
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-EG');
+        }
+
         function setupEventListeners() {
             // Add member modal
             const addMemberBtn = document.getElementById('addMemberBtn');
@@ -453,50 +474,74 @@
             const cancelAddMember = document.getElementById('cancelAddMember');
             const addMemberForm = document.getElementById('addMemberForm');
             
-            addMemberBtn.addEventListener('click', function() {
-                addMemberModal.classList.remove('hidden');
-                anime({
-                    targets: addMemberModal.querySelector('.bg-white'),
-                    scale: [0.8, 1],
-                    opacity: [0, 1],
-                    duration: 300,
-                    easing: 'easeOutQuart'
+            if (addMemberBtn && addMemberModal) {
+                addMemberBtn.addEventListener('click', function() {
+                    addMemberModal.classList.remove('hidden');
+                    if (typeof anime !== 'undefined') {
+                        anime({
+                            targets: addMemberModal.querySelector('.bg-white'),
+                            scale: [0.8, 1],
+                            opacity: [0, 1],
+                            duration: 300,
+                            easing: 'easeOutQuart'
+                        });
+                    }
                 });
-            });
+            }
             
-            cancelAddMember.addEventListener('click', function() {
-                closeModal();
-            });
-            
-            addMemberModal.addEventListener('click', function(e) {
-                if (e.target === addMemberModal) {
+            if (cancelAddMember) {
+                cancelAddMember.addEventListener('click', function() {
                     closeModal();
-                }
-            });
+                });
+            }
             
-            addMemberForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                handleAddMember();
-            });
+            if (addMemberModal) {
+                addMemberModal.addEventListener('click', function(e) {
+                    if (e.target === addMemberModal) {
+                        closeModal();
+                    }
+                });
+            }
+            
+            if (addMemberForm) {
+                addMemberForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleAddMember();
+                });
+            }
 
             // Admin controls
-            document.getElementById('inviteBtn').addEventListener('click', function() {
-                addMemberModal.classList.remove('hidden');
-            });
+            const inviteBtn = document.getElementById('inviteBtn');
+            const manageRolesBtn = document.getElementById('manageRolesBtn');
+            const familySettingsBtn = document.getElementById('familySettingsBtn');
             
-            document.getElementById('manageRolesBtn').addEventListener('click', function() {
-                FamilyConnect.showNotification('إدارة الأدوار قريباً!');
-            });
+            if (inviteBtn) {
+                inviteBtn.addEventListener('click', function() {
+                    if (addMemberModal) {
+                        addMemberModal.classList.remove('hidden');
+                    }
+                });
+            }
             
-            document.getElementById('familySettingsBtn').addEventListener('click', function() {
-                FamilyConnect.showNotification('إعدادات العائلة قريباً!');
-            });
+            if (manageRolesBtn) {
+                manageRolesBtn.addEventListener('click', function() {
+                    FamilyConnect.showNotification('إدارة الأدوار قريباً!');
+                });
+            }
+            
+            if (familySettingsBtn) {
+                familySettingsBtn.addEventListener('click', function() {
+                    FamilyConnect.showNotification('إعدادات العائلة قريباً!');
+                });
+            }
 
             // Search functionality
             const searchInput = document.getElementById('searchMembers');
-            searchInput.addEventListener('input', function() {
-                filterMembers(this.value);
-            });
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    filterMembers(this.value);
+                });
+            }
 
             // Filter buttons
             const filterBtns = document.querySelectorAll('.member-filter');
@@ -518,23 +563,36 @@
 
         function closeModal() {
             const modal = document.getElementById('addMemberModal');
-            anime({
-                targets: modal.querySelector('.bg-white'),
-                scale: [1, 0.8],
-                opacity: [1, 0],
-                duration: 200,
-                easing: 'easeInQuart',
-                complete: () => {
-                    modal.classList.add('hidden');
-                }
-            });
+            if (!modal) return;
+            
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: modal.querySelector('.bg-white'),
+                    scale: [1, 0.8],
+                    opacity: [1, 0],
+                    duration: 200,
+                    easing: 'easeInQuart',
+                    complete: () => {
+                        modal.classList.add('hidden');
+                    }
+                });
+            } else {
+                modal.classList.add('hidden');
+            }
         }
 
         function handleAddMember() {
-            const name = document.getElementById('memberName').value;
-            const email = document.getElementById('memberEmail').value;
-            const relationship = document.getElementById('memberRelationship').value;
-            const role = document.getElementById('memberRole').value;
+            const nameInput = document.getElementById('memberName');
+            const emailInput = document.getElementById('memberEmail');
+            const relationshipInput = document.getElementById('memberRelationship');
+            const roleInput = document.getElementById('memberRole');
+            
+            if (!nameInput || !emailInput || !relationshipInput || !roleInput) return;
+            
+            const name = nameInput.value;
+            const email = emailInput.value;
+            const relationship = relationshipInput.value;
+            const role = roleInput.value;
             
             // Create new member object
             const newMember = {
@@ -557,7 +615,10 @@
             
             // Close modal and reset form
             closeModal();
-            document.getElementById('addMemberForm').reset();
+            const addMemberForm = document.getElementById('addMemberForm');
+            if (addMemberForm) {
+                addMemberForm.reset();
+            }
             
             // Show success message
             FamilyConnect.showNotification(`تمت دعوة ${name} للانضمام إلى العائلة!`);
@@ -600,68 +661,33 @@
             }
         }
 
-        function initializeFamilyTree() {
-            // Simple p5.js family tree visualization
-            const sketch = (p) => {
-                let nodes = [];
-                let connections = [];
+        // Global FamilyConnect object for notifications
+        window.FamilyConnect = {
+            showNotification: function(message) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 left-4 right-4 bg-warm-sage text-white p-4 rounded-lg shadow-lg z-50 transform translate-y-[-100px] transition-transform duration-300';
+                notification.textContent = message;
                 
-                p.setup = () => {
-                    const canvas = p.createCanvas(300, 250);
-                    canvas.parent('familyTree');
-                    
-                    // Create nodes for family members
-                    const centerX = p.width / 2;
-                    const centerY = p.height / 2;
-                    
-                    // Grandparents
-                    nodes.push({ x: centerX - 60, y: 40, name: "الجدة", size: 25, color: '#E8C4A0' });
-                    nodes.push({ x: centerX + 60, y: 40, name: "الجد", size: 25, color: '#E8C4A0' });
-                    
-                    // Parents
-                    nodes.push({ x: centerX - 40, y: 100, name: "الأم", size: 30, color: '#8B9A7A' });
-                    nodes.push({ x: centerX + 40, y: 100, name: "الأب", size: 30, color: '#8B9A7A' });
-                    
-                    // Children
-                    nodes.push({ x: centerX - 60, y: 160, name: "سارة", size: 25, color: '#B8A9C9' });
-                    nodes.push({ x: centerX, y: 160, name: "مايك", size: 25, color: '#B8A9C9' });
-                    nodes.push({ x: centerX + 60, y: 160, name: "إيما", size: 25, color: '#B8A9C9' });
-                    
-                    // Connections
-                    connections = [
-                        [0, 2], [1, 3], // Grandparents to Parents
-                        [2, 4], [2, 5], [2, 6], [3, 4], [3, 5], [3, 6] // Parents to Children
-                    ];
-                };
+                document.body.appendChild(notification);
                 
-                p.draw = () => {
-                    p.background(247, 245, 243, 200);
-                    
-                    // Draw connections
-                    p.stroke(139, 154, 122, 100);
-                    p.strokeWeight(2);
-                    connections.forEach(conn => {
-                        const from = nodes[conn[0]];
-                        const to = nodes[conn[1]];
-                        p.line(from.x, from.y, to.x, to.y);
-                    });
-                    
-                    // Draw nodes
-                    nodes.forEach(node => {
-                        p.fill(node.color);
-                        p.noStroke();
-                        p.ellipse(node.x, node.y, node.size);
-                        
-                        p.fill(255);
-                        p.textAlign(p.CENTER, p.CENTER);
-                        p.textSize(8);
-                        p.text(node.name, node.x, node.y);
-                    });
-                };
-            };
-            
-            new p5(sketch);
-        }
+                // Animate in
+                setTimeout(() => {
+                    notification.classList.remove('translate-y-[-100px]');
+                    notification.classList.add('translate-y-0');
+                }, 100);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.classList.add('translate-y-[-100px]');
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        };
     </script>
 </body>
 </html>

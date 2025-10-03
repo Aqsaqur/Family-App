@@ -6,9 +6,9 @@ const samplePosts = [
     {
         id: 1,
         author: "اسمي",
-        avatar: "https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/f843dd68f7a3896749d740d3ba86b751ffbd1c41",
+        avatar: "images/muslim-family-1.jpg",
         content: "Had such a wonderful time at grandma's birthday party today! The kids loved the cake and we got some great family photos. Can't wait to share them with everyone! 🎂👨‍👩‍👧‍👦",
-        image: "https://kimi-web-img.moonshot.cn/img/cbx-prod.b-cdn.net/5f9a173b3b3a8768dfbe2f6237e789eb116a822a.jpg",
+        image: "images/muslim-family-3.jpg",
         timestamp: "2 hours ago",
         likes: 8,
         comments: 3,
@@ -18,7 +18,7 @@ const samplePosts = [
     {
         id: 2,
         author: "Mike Chen",
-        avatar: "https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/794ba1d9a952dd738ce740ab7ee77b33bff8458d.jpg",
+        avatar: "images/muslim-family-2.png",
         content: "Reminder: Family game night this Friday at 7 PM! Bring your favorite board games and snacks. Looking forward to seeing everyone! 🎲🎯",
         timestamp: "4 hours ago",
         likes: 12,
@@ -29,46 +29,22 @@ const samplePosts = [
     {
         id: 3,
         author: "Emma Wilson",
-        avatar: "https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/dc0339388f194f09df80fc60eb5a22b47571b58f",
+        avatar: "images/muslim-family-4.jpg",
         content: "Little Tommy took his first steps today! We're so proud of him. These moments are what make family so special. 👶💕",
         timestamp: "6 hours ago",
         likes: 15,
         comments: 7,
         type: "updates",
         liked: false
-    },
-    {
-        id: 4,
-        author: "David Martinez",
-        avatar: "https://kimi-web-img.moonshot.cn/img/davidquisenberry.com/d02d792af7069ad7e063335c5d5e59a3d9c41d67.jpg",
-        content: "Beautiful sunset family walk in the park. Sometimes it's the simple moments that mean the most. 🌅👨‍👩‍👧‍👦",
-        image: "https://kimi-web-img.moonshot.cn/img/www.mthoodrentals.com/cf440351bb646599f3442a89861bdaf62930b1f8.jpg",
-        timestamp: "1 day ago",
-        likes: 10,
-        comments: 2,
-        type: "photos",
-        liked: true
-    },
-    {
-        id: 5,
-        author: "Lisa Thompson",
-        avatar: "https://kimi-web-img.moonshot.cn/img/www.katielister.co.uk/e3c94f5a4a28a3d5a8a744d2af01b9d6ef0bd28f.jpg",
-        content: "Cooking dinner together as a family tonight. Grandma's special recipe is being passed down to the next generation! 👩‍🍳👨‍🍳",
-        image: "https://kimi-web-img.moonshot.cn/img/easypeasie.com/26db45a69414e680df0edd318113c2683cdff057.jpg",
-        timestamp: "1 day ago",
-        likes: 9,
-        comments: 4,
-        type: "photos",
-        liked: false
     }
 ];
 
 const familyMembers = [
-    { name: "Sarah Johnson", role: "Admin", avatar: "https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/f843dd68f7a3896749d740d3ba86b751ffbd1c41", online: true },
-    { name: "Mike Chen", role: "Member", avatar: "https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/794ba1d9a952dd738ce740ab7ee77b33bff8458d.jpg", online: true },
-    { name: "Emma Wilson", role: "Member", avatar: "https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/dc0339388f194f09df80fc60eb5a22b47571b58f", online: false },
-    { name: "David Martinez", role: "Member", avatar: "https://kimi-web-img.moonshot.cn/img/davidquisenberry.com/d02d792af7069ad7e063335c5d5e59a3d9c41d67.jpg", online: true },
-    { name: "Lisa Thompson", role: "Member", avatar: "https://kimi-web-img.moonshot.cn/img/www.katielister.co.uk/e3c94f5a4a28a3d5a8a744d2af01b9d6ef0bd28f.jpg", online: false }
+    { name: "Sarah Johnson", role: "Admin", avatar: "images/muslim-family-1.jpg", online: true },
+    { name: "Mike Chen", role: "Member", avatar: "images/muslim-family-2.png", online: true },
+    { name: "Emma Wilson", role: "Member", avatar: "images/muslim-family-4.jpg", online: false },
+    { name: "David Martinez", role: "Member", avatar: "images/muslim-family-5.jpeg", online: true },
+    { name: "Lisa Thompson", role: "Member", avatar: "images/muslim-family-6.jpg", online: false }
 ];
 
 // Initialize app
@@ -79,7 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeApp() {
     loadPosts();
     setupEventListeners();
-    initializeAnimations();
     
     // Load saved posts from localStorage
     const savedPosts = localStorage.getItem('familyPosts');
@@ -113,8 +88,10 @@ function setupEventListeners() {
             filterPosts(filter);
             
             // Update active state
-            filterBtns.forEach(b => b.classList.remove('active', 'bg-warm-sage', 'text-white'));
-            filterBtns.forEach(b => b.classList.add('bg-white', 'text-deep-charcoal'));
+            filterBtns.forEach(b => {
+                b.classList.remove('active', 'bg-warm-sage', 'text-white');
+                b.classList.add('bg-white', 'text-deep-charcoal');
+            });
             this.classList.add('active', 'bg-warm-sage', 'text-white');
             this.classList.remove('bg-white', 'text-deep-charcoal');
         });
@@ -124,11 +101,10 @@ function setupEventListeners() {
     const floatingBtn = document.getElementById('floatingBtn');
     if (floatingBtn) {
         floatingBtn.addEventListener('click', function() {
-            document.getElementById('postInput').focus();
-            this.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
+            const postInput = document.getElementById('postInput');
+            if (postInput) {
+                postInput.focus();
+            }
         });
     }
 
@@ -170,15 +146,17 @@ function renderPosts(posts) {
         feed.appendChild(postElement);
     });
 
-    // Animate posts in
-    anime({
-        targets: '.post-card',
-        translateY: [50, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(100),
-        duration: 600,
-        easing: 'easeOutQuart'
-    });
+    // Animate posts in if anime.js is available
+    if (typeof anime !== 'undefined') {
+        anime({
+            targets: '.post-card',
+            translateY: [50, 0],
+            opacity: [0, 1],
+            delay: anime.stagger(100),
+            duration: 600,
+            easing: 'easeOutQuart'
+        });
+    }
 }
 
 function createPostElement(post, index) {
@@ -235,23 +213,31 @@ function createPostElement(post, index) {
     const commentBtn = postDiv.querySelector('.comment-btn');
     const shareBtn = postDiv.querySelector('.share-btn');
     
-    likeBtn.addEventListener('click', function() {
-        toggleLike(post.id, this);
-    });
+    if (likeBtn) {
+        likeBtn.addEventListener('click', function() {
+            toggleLike(post.id, this);
+        });
+    }
     
-    commentBtn.addEventListener('click', function() {
-        showNotification('Comments feature coming soon!');
-    });
+    if (commentBtn) {
+        commentBtn.addEventListener('click', function() {
+            showNotification('Comments feature coming soon!');
+        });
+    }
     
-    shareBtn.addEventListener('click', function() {
-        showNotification('Post shared with family!');
-    });
+    if (shareBtn) {
+        shareBtn.addEventListener('click', function() {
+            showNotification('Post shared with family!');
+        });
+    }
     
     return postDiv;
 }
 
 function createPost() {
     const postInput = document.getElementById('postInput');
+    if (!postInput) return;
+    
     const content = postInput.value.trim();
     
     if (!content) return;
@@ -259,7 +245,7 @@ function createPost() {
     const newPost = {
         id: Date.now(),
         author: "You",
-        avatar: "https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/69f2c0bea4aa2f462d788f299dfc2a1568dd4298.jpg",
+        avatar: "images/muslim-family-4.jpeg",
         content: content,
         timestamp: "Just now",
         likes: 0,
@@ -278,7 +264,10 @@ function createPost() {
     
     // Clear input
     postInput.value = '';
-    document.getElementById('postBtn').disabled = true;
+    const postBtn = document.getElementById('postBtn');
+    if (postBtn) {
+        postBtn.disabled = true;
+    }
     
     // Re-render posts
     renderPosts(posts);
@@ -286,16 +275,18 @@ function createPost() {
     // Show success message
     showNotification('Post shared with your family!');
     
-    // Animate new post
-    const firstPost = document.querySelector('.post-card');
-    if (firstPost) {
-        anime({
-            targets: firstPost,
-            scale: [0.9, 1],
-            opacity: [0.7, 1],
-            duration: 300,
-            easing: 'easeOutQuart'
-        });
+    // Animate new post if anime.js is available
+    if (typeof anime !== 'undefined') {
+        const firstPost = document.querySelector('.post-card');
+        if (firstPost) {
+            anime({
+                targets: firstPost,
+                scale: [0.9, 1],
+                opacity: [0.7, 1],
+                duration: 300,
+                easing: 'easeOutQuart'
+            });
+        }
     }
 }
 
@@ -314,22 +305,30 @@ function toggleLike(postId, button) {
     const likeCount = button.querySelector('span');
     const heartIcon = button.querySelector('svg');
     
-    likeCount.textContent = post.likes;
+    if (likeCount) {
+        likeCount.textContent = post.likes;
+    }
     
     if (post.liked) {
         button.classList.add('liked', 'text-error-coral');
-        heartIcon.setAttribute('fill', 'currentColor');
+        if (heartIcon) {
+            heartIcon.setAttribute('fill', 'currentColor');
+        }
         
-        // Animate like
-        anime({
-            targets: button,
-            scale: [1, 1.3, 1],
-            duration: 300,
-            easing: 'easeOutQuart'
-        });
+        // Animate like if anime.js is available
+        if (typeof anime !== 'undefined') {
+            anime({
+                targets: button,
+                scale: [1, 1.3, 1],
+                duration: 300,
+                easing: 'easeOutQuart'
+            });
+        }
     } else {
         button.classList.remove('liked', 'text-error-coral');
-        heartIcon.setAttribute('fill', 'none');
+        if (heartIcon) {
+            heartIcon.setAttribute('fill', 'none');
+        }
     }
     
     // Save to localStorage
@@ -349,67 +348,34 @@ function filterPosts(filter) {
     renderPosts(filteredPosts);
 }
 
-function initializeAnimations() {
-    // Animate hero stats on load
-    anime({
-        targets: '.hero-bg .grid > div',
-        translateY: [30, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(100),
-        duration: 800,
-        easing: 'easeOutQuart'
-    });
-    
-    // Floating button pulse animation
-    const floatingBtn = document.getElementById('floatingBtn');
-    if (floatingBtn) {
-        setInterval(() => {
-            anime({
-                targets: floatingBtn,
-                scale: [1, 1.05, 1],
-                duration: 2000,
-                easing: 'easeInOutSine'
-            });
-        }, 5000);
-    }
-}
-
 function showNotification(message) {
     // Create notification element
     const notification = document.createElement('div');
-    notification.className = 'fixed top-4 left-4 right-4 bg-success-green text-white p-3 rounded-lg shadow-lg z-50 text-sm font-medium';
+    notification.className = 'fixed top-4 left-4 right-4 bg-warm-sage text-white p-4 rounded-lg shadow-lg z-50 transform translate-y-[-100px] transition-transform duration-300';
     notification.textContent = message;
     
     document.body.appendChild(notification);
     
     // Animate in
-    anime({
-        targets: notification,
-        translateY: [-50, 0],
-        opacity: [0, 1],
-        duration: 300,
-        easing: 'easeOutQuart'
-    });
+    setTimeout(() => {
+        notification.classList.remove('translate-y-[-100px]');
+        notification.classList.add('translate-y-0');
+    }, 100);
     
     // Remove after 3 seconds
     setTimeout(() => {
-        anime({
-            targets: notification,
-            translateY: [0, -50],
-            opacity: [1, 0],
-            duration: 300,
-            easing: 'easeInQuart',
-            complete: () => {
+        notification.classList.add('translate-y-[-100px]');
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
                 document.body.removeChild(notification);
             }
-        });
+        }, 300);
     }, 3000);
 }
 
 // Export functions for use in other pages
 window.FamilyConnect = {
     showNotification,
-    initializeAnimations,
     familyMembers,
     samplePosts
 };
